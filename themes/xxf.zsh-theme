@@ -46,6 +46,26 @@ ys_hg_prompt_info() {
 	fi
 }
 
+
+# Conda info
+local conda_info='$(conda_prompt_info)'
+conda_prompt_info() {
+  if [ -n "$CONDA_DEFAULT_ENV" ]; then
+    echo -n "($CONDA_DEFAULT_ENV) "
+  else 
+    echo -n "(base) "
+  fi
+}
+
+# virtualenv info
+local virtualenv_info='$(virtualenv_prompt_info)'
+virtualenv_prompt_info() {
+  if [ -n "$VIRTUAL_ENV" ]; then
+    VIRTUAL_ENV_NAME=`basename $VIRTUAL_ENV`
+    echo -n "($VIRTUAL_ENV_NAME) "
+  fi
+}
+
 # Prompt format: \n # TIME USER at MACHINE in [DIRECTORY] on git:BRANCH STATE \n $ 
 PROMPT="
 %{$fg[cyan]%}%n \
@@ -53,6 +73,8 @@ PROMPT="
 %{$fg[green]%}$(box_name) \
 %{$fg[white]%}in \
 %{$terminfo[bold]$fg[yellow]%}[${current_dir}]%{$reset_color%} \
+%{$fg[cyan]%}${conda_info}\
+%{$fg[cyan]%}${virtualenv_info}\
 ${hg_info} \
 ${git_info} \
 ${git_last_commit}
@@ -67,7 +89,9 @@ PROMPT="
 %{$fg[white]%}at \
 %{$fg[green]%}$(box_name) \
 %{$fg[white]%}in \
-%{$terminfo[bold]$fg[yellow]%}[${current_dir}]%{$reset_color%}\
+%{$terminfo[bold]$fg[yellow]%}[${current_dir}]%{$reset_color%} \
+%{$fg[cyan]%}${conda_info}\
+%{$fg[cyan]%}${virtualenv_info}\
 ${hg_info}\
 ${git_info}
 %{$terminfo[bold]$fg[red]%}$ %{$reset_color%}"
